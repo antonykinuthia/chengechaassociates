@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import Counter from "./components/Counter";
 import { useEffect, useRef, useState } from "react";
+import { useTheme } from "next-themes";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
@@ -21,11 +22,43 @@ const navLinks = [
   { label: "Contact", href: "#contact" },
 ];
 
-
 const WHATSAPP_NUMBER = "254729714843";
 const WHATSAPP_MESSAGE = encodeURIComponent(
   "Hi Chengecha Associates, I'd like to talk about accounting/tax services for my business."
 );
+
+function ThemeToggle({ className = "" }: { className?: string }) {
+  const { resolvedTheme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) {
+    return <div className={`w-9 h-9 ${className}`} aria-hidden="true" />;
+  }
+
+  const isDark = resolvedTheme === "dark";
+
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      className={`w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-amber-400 hover:text-amber-500 transition-colors duration-200 ${className}`}
+    >
+      {isDark ? (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+        </svg>
+      ) : (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+        </svg>
+      )}
+    </button>
+  );
+}
 
 export default function Home() {
   const heroContentRef = useRef<HTMLDivElement>(null);
@@ -46,6 +79,10 @@ export default function Home() {
     });
     gsap.ticker.lagSmoothing(0);
 
+    lenis.on("scroll", ScrollTrigger.update);
+    const handleWindowLoad = () => ScrollTrigger.refresh();
+    window.addEventListener("load", handleWindowLoad);
+
     const handleAnchorClick = (e: MouseEvent) => {
       const target = e.currentTarget as HTMLAnchorElement;
       const hash = target.getAttribute("href");
@@ -53,7 +90,7 @@ export default function Home() {
         e.preventDefault();
         const el = document.querySelector(hash);
         if (el) lenis.scrollTo(el as HTMLElement, { offset: -80 });
-        setMenuOpen(false); 
+        setMenuOpen(false);
       }
     };
     const anchors = document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]');
@@ -118,14 +155,15 @@ export default function Home() {
       ScrollTrigger.getAll().forEach((t) => t.kill());
       gsap.ticker.remove((time) => lenis.raf(time * 1000));
       anchors.forEach((a) => a.removeEventListener("click", handleAnchorClick));
+      window.removeEventListener("load", handleWindowLoad);
       lenis.destroy();
     };
   }, []);
 
   return (
-    <div className={`${dmSans.className} w-full bg-white text-gray-900`}>
+    <div className={`${dmSans.className} w-full bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300`}>
 
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-100">
+      <header className="sticky top-0 z-50 bg-white/95 dark:bg-gray-950/95 backdrop-blur border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="#home" className="relative h-9 w-36 shrink-0 block">
             <Image
@@ -143,19 +181,19 @@ export default function Home() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-gray-600 hover:text-amber-500 transition-colors duration-200"
+                className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-amber-500 dark:hover:text-amber-400 transition-colors duration-200"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
               target="_blank"
               rel="noopener noreferrer"
-              
             >
               <span
                 className="inline-block w-5 h-5 bg-green-600 hover:bg-green-700 transition-colors duration-200"
@@ -171,44 +209,45 @@ export default function Home() {
                 }}
                 aria-label="WhatsApp icon"
               />
-              {/* <span>💬</span> WhatsApp Us */}
             </a>
           </div>
 
-          <button
-            className="md:hidden flex flex-col gap-1.5 p-2 relative z-50"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((prev) => !prev)}
-          >
-            <span
-              className={`w-6 h-0.5 bg-gray-700 block transition-transform duration-200 ${
-                menuOpen ? "rotate-45 translate-y-2" : ""
-              }`}
-            />
-            <span
-              className={`w-6 h-0.5 bg-gray-700 block transition-opacity duration-200 ${
-                menuOpen ? "opacity-0" : ""
-              }`}
-            />
-            <span
-              className={`w-6 h-0.5 bg-gray-700 block transition-transform duration-200 ${
-                menuOpen ? "-rotate-45 -translate-y-2" : ""
-              }`}
-            />
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle />
+            <button
+              className="flex flex-col gap-1.5 p-2 relative z-50"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((prev) => !prev)}
+            >
+              <span
+                className={`w-6 h-0.5 bg-gray-700 dark:bg-gray-200 block transition-transform duration-200 ${
+                  menuOpen ? "rotate-45 translate-y-2" : ""
+                }`}
+              />
+              <span
+                className={`w-6 h-0.5 bg-gray-700 dark:bg-gray-200 block transition-opacity duration-200 ${
+                  menuOpen ? "opacity-0" : ""
+                }`}
+              />
+              <span
+                className={`w-6 h-0.5 bg-gray-700 dark:bg-gray-200 block transition-transform duration-200 ${
+                  menuOpen ? "-rotate-45 -translate-y-2" : ""
+                }`}
+              />
+            </button>
+          </div>
         </div>
 
-
         {menuOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full bg-white border-b border-gray-100 shadow-lg">
+          <div className="md:hidden absolute top-full left-0 w-full bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800 shadow-lg">
             <nav className="flex flex-col px-6 py-4 gap-1">
               {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="py-3 text-base font-medium text-gray-700 hover:text-amber-500 border-b border-gray-50 last:border-b-0 transition-colors duration-200"
+                  className="py-3 text-base font-medium text-gray-700 dark:text-gray-200 hover:text-amber-500 dark:hover:text-amber-400 border-b border-gray-50 dark:border-gray-800 last:border-b-0 transition-colors duration-200"
                 >
                   {link.label}
                 </a>
@@ -236,14 +275,15 @@ export default function Home() {
           >
             <Image
               src="/bg.jpg"
-              alt="Chengecha Associates"
+              alt="Modern office workspace representing Chengecha Associates accounting services"
               fill
               priority
               className="object-cover object-center"
             />
           </div>
 
-          <div className="absolute inset-0 bg-black/55 z-10" />
+          {/* Slightly darker overlay in dark mode keeps text contrast consistent */}
+          <div className="absolute inset-0 bg-black/55 dark:bg-black/65 z-10" />
 
           <div ref={heroContentRef} className="relative z-20 max-w-7xl mx-auto px-6 w-full flex justify-end">
             <div className="max-w-xl space-y-6 text-white">
@@ -260,7 +300,6 @@ export default function Home() {
                 and tax services built around your business.
               </p>
 
-
               <div className="flex flex-wrap gap-3 pt-2">
                 <a
                   href="#contact"
@@ -274,26 +313,25 @@ export default function Home() {
                 >
                   Our Services
                 </a>
-                
               </div>
             </div>
           </div>
         </section>
 
 
-        <section id="about" className="min-h-screen flex items-center py-24 bg-white">
+        <section id="about" className="min-h-screen flex items-center py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
           <div className="max-w-7xl mx-auto px-6 w-full">
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-end mb-16">
 
               <div className="lg:col-span-3 flex flex-col">
-                <p className="section-heading text-amber-500 text-sm font-semibold uppercase tracking-widest mb-3">
+                <p className="section-heading text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-widest mb-3">
                   Who We Are
                 </p>
-                <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 mb-6`}>
+                <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6`}>
                   About Chengecha Associates
                 </h2>
-                <p className="text-gray-500 text-lg leading-relaxed">
+                <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed">
                   At Chengecha &amp; Associates, we understand the unique challenges
                   faced by Kenyan businesses. With over 7 years of experience
                   serving SMEs across Kenya, we&apos;ve built our reputation on
@@ -303,7 +341,7 @@ export default function Home() {
               </div>
 
 
-              <div className="lg:col-span-2 bg-gray-950 rounded-2xl p-8 text-white flex flex-col justify-between gap-6">
+              <div className="lg:col-span-2 bg-gray-950 dark:bg-gray-900 dark:border dark:border-gray-800 rounded-2xl p-8 text-white flex flex-col justify-between gap-6">
                 <div>
                   <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-3">Why Choose Us?</p>
                   <h3 className={`${playfair.className} text-xl font-bold mb-6 leading-snug`}>
@@ -333,7 +371,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 border-t border-gray-100">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 border-t border-gray-100 dark:border-gray-800">
               {[
                 { end: 7, suffix: "+", label: "Years Experience" },
                 { end: 150, suffix: "+", label: "Businesses Served" },
@@ -342,7 +380,7 @@ export default function Home() {
               ].map((stat) => (
                 <div key={stat.label} className="text-center">
                   <Counter end={stat.end} suffix={stat.suffix} />
-                  <p className="mt-3 text-gray-500 text-sm uppercase tracking-wide">{stat.label}</p>
+                  <p className="mt-3 text-gray-500 dark:text-gray-400 text-sm uppercase tracking-wide">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -351,12 +389,12 @@ export default function Home() {
         </section>
 
 
-        <section id="services" className="min-h-screen flex items-center py-24 bg-gray-50">
+        <section id="services" className="min-h-screen flex items-center py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
           <div className="max-w-7xl mx-auto px-6">
-            <p className="section-heading text-amber-500 text-sm font-semibold uppercase tracking-widest mb-3">
+            <p className="section-heading text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-widest mb-3">
               What We Do
             </p>
-            <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 mb-12`}>
+            <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-12`}>
               Our Services
             </h2>
 
@@ -405,7 +443,7 @@ export default function Home() {
               ].map((service) => (
                 <div
                   key={service.title}
-                  className="service-card group relative h-135 rounded-[28px] overflow-hidden shadow-sm hover:shadow-xl transition-shadow"
+                  className="service-card group relative h-135 rounded-[28px] overflow-hidden shadow-sm dark:shadow-none dark:ring-1 dark:ring-gray-800 hover:shadow-xl transition-shadow"
                 >
                   <Image
                     src={service.image}
@@ -449,12 +487,12 @@ export default function Home() {
         </section>
 
 
-        <section id="testimonials" className="min-h-screen flex items-center py-24 bg-white">
+        <section id="testimonials" className="min-h-screen flex items-center py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
           <div className="max-w-7xl mx-auto px-6">
-            <p className="section-heading text-amber-500 text-sm font-semibold uppercase tracking-widest mb-3">
+            <p className="section-heading text-amber-500 dark:text-amber-400 text-sm font-semibold uppercase tracking-widest mb-3">
               Social Proof
             </p>
-            <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 mb-12`}>
+            <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-12`}>
               What Our Clients Say
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -481,13 +519,10 @@ export default function Home() {
                   company: "Chepkoech Retail Group",
                 },
               ].map((t) => (
-                <div key={t.name} className="testimonial-card bg-gray-200/80 rounded-2xl p-8 border border-gray-100">
-                  <p className="text-gray-700 text-base leading-relaxed mb-6 italic">"{t.quote}"</p>
+                <div key={t.name} className="testimonial-card bg-gray-200/80 dark:bg-gray-800/60 rounded-2xl p-8 border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+                  <p className="text-gray-700 dark:text-gray-200 text-base leading-relaxed mb-6 italic">"{t.quote}"</p>
                   <div>
-                    <p className="font-semibold text-gray-900 text-sm">{t.name}</p>
-                    {/* <p className="text-gray-400 text-xs">
-                      {t.role}, {t.company}
-                    </p> */}
+                    <p className="font-semibold text-gray-900 dark:text-white text-sm">{t.name}</p>
                   </div>
                 </div>
               ))}
@@ -496,7 +531,7 @@ export default function Home() {
         </section>
 
 
-        <section id="contact" className="min-h-screen flex items-center py-24 bg-gray-950 text-white">
+        <section id="contact" className="min-h-screen flex items-center py-24 bg-gray-950 dark:bg-black text-white transition-colors duration-300">
           <div className="contact-inner max-w-7xl mx-auto px-6 w-full">
 
             <p className="section-heading text-amber-400 text-sm font-semibold uppercase tracking-widest mb-3">
@@ -531,10 +566,10 @@ export default function Home() {
                     href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    
+                    className="w-full  flex items-center justify-center"
                   >
                     <span
-                      className="inline-block w-20 h-10 bg-green-600 hover:bg-green-700 transition-colors duration-200"
+                      className="inline-block w-20 h-10 bg-green-500 hover:bg-green-400 transition-colors duration-200"
                       style={{
                         maskImage: "url('/logo/whatsapp.svg')",
                         maskSize: "contain",
@@ -590,28 +625,27 @@ export default function Home() {
         </section>
 
 
-        <footer className="bg-gray-950 border-t border-white/10 py-8">
+        <footer className="bg-gray-950 dark:bg-black border-t border-white/10 dark:border-gray-800 py-8 transition-colors duration-300">
           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <a href="#home" className="relative h-9 w-36 shrink-0 block">
-            <Image
-              src="/logo/logo.png"
-              alt="Chengecha Associates"
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 50px"
-              className="object-contain object-left"
-            />
-          </a>
+              <Image
+                src="/logo/logo.png"
+                alt="Chengecha Associates"
+                fill
+                sizes="(max-width: 768px) 100vw, 50px"
+                className="object-contain object-left"
+              />
+            </a>
             <p className="text-gray-500 text-xs">
               © {new Date().getFullYear()} Chengecha Associates. All rights reserved.
             </p>
-            <div className="flex gap-6 flex-wrap">
+            <nav aria-label="Footer" className="flex gap-6 flex-wrap">
               {navLinks.map((link) => (
                 <a key={link.href} href={link.href} className="text-gray-500 hover:text-amber-400 text-xs transition-colors">
                   {link.label}
                 </a>
               ))}
-            </div>
+            </nav>
           </div>
         </footer>
       </div>
