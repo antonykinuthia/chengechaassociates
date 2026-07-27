@@ -176,7 +176,7 @@ export default function Home() {
               fill
               priority
               sizes="300px"
-              className="object-contain object-left dark:brightness-0 dark:invert"
+              className="object-contain object-left"
             />
           </a>
 
@@ -286,7 +286,7 @@ export default function Home() {
             />
           </div>
 
-          {/* Slightly darker overlay in dark mode keeps text contrast consistent */}
+          
           <div className="absolute inset-0 bg-black/55 dark:bg-black/65 z-10" />
 
           <div ref={heroContentRef} className="relative z-20 max-w-7xl mx-auto px-6 w-full flex justify-end">
@@ -519,17 +519,13 @@ export default function Home() {
                   quote:
                     "I continue to engage Chengecha and Associates in my Annual Audit work due to their detailed and well organized work…",
                   name: "Mercy Chepkoech",
-                  role: "Owner",
-                  company: "Chepkoech Retail Group",
                 },
               ].map((t) => (
                 <div key={t.name} className="testimonial-card bg-gray-200/80 dark:bg-gray-800/60 rounded-2xl p-8 border border-gray-100 dark:border-gray-700 transition-colors duration-300">
                   <p className="text-gray-700 dark:text-gray-200 text-base leading-relaxed mb-6 italic">"{t.quote}"</p>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white text-sm">{t.name}</p>
-                    {/* <p className="text-gray-400 text-xs">
-                      {t.role}, {t.company}
-                    </p> */}
+                
                   </div>
                 </div>
               ))}
@@ -573,7 +569,7 @@ export default function Home() {
                     href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-white/10 border border-white/20 rounded-lg flex items-center justify-center hover:bg-white/15 transition-colors duration-200"
+                    className="w-full  flex items-center justify-center"
                   >
                     <span
                       className="inline-block w-20 h-10 bg-green-500 hover:bg-green-400 transition-colors duration-200"
@@ -640,7 +636,7 @@ export default function Home() {
                 alt="Chengecha Associates"
                 fill
                 sizes="(max-width: 768px) 100vw, 50px"
-                className="object-contain object-left brightness-0 invert"
+                className="object-contain object-left"
               />
             </a>
             <p className="text-gray-500 text-xs">
