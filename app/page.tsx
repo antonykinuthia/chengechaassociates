@@ -31,6 +31,7 @@ function ThemeToggle({ className = "" }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+
   useEffect(() => setMounted(true), []);
 
   if (!mounted) {
@@ -107,15 +108,18 @@ export default function Home() {
     }
 
     if (heroImageRef.current) {
-      gsap.to(heroImageRef.current, {
-        y: "20%",
-        ease: "none",
-        scrollTrigger: {
-          trigger: "#home",
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 768px)", () => {
+        gsap.to(heroImageRef.current, {
+          y: "20%",
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#home",
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
       });
     }
 
@@ -172,7 +176,7 @@ export default function Home() {
               fill
               priority
               sizes="300px"
-              className="object-contain object-left"
+              className="object-contain object-left dark:brightness-0 dark:invert"
             />
           </a>
 
@@ -267,7 +271,7 @@ export default function Home() {
 
       <div className="max-w-7xl mx-auto">
 
-        <section id="home" className="relative h-screen min-h-150 flex items-center overflow-hidden">
+        <section id="home" className="relative h-dvh min-h-150 flex items-center overflow-hidden">
           <div
             ref={heroImageRef}
             className="absolute inset-x-0 top-[-10%] h-[120%] w-full"
@@ -523,6 +527,9 @@ export default function Home() {
                   <p className="text-gray-700 dark:text-gray-200 text-base leading-relaxed mb-6 italic">"{t.quote}"</p>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white text-sm">{t.name}</p>
+                    {/* <p className="text-gray-400 text-xs">
+                      {t.role}, {t.company}
+                    </p> */}
                   </div>
                 </div>
               ))}
@@ -566,7 +573,7 @@ export default function Home() {
                     href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full  flex items-center justify-center"
+                    className="w-full bg-white/10 border border-white/20 rounded-lg flex items-center justify-center hover:bg-white/15 transition-colors duration-200"
                   >
                     <span
                       className="inline-block w-20 h-10 bg-green-500 hover:bg-green-400 transition-colors duration-200"
@@ -633,7 +640,7 @@ export default function Home() {
                 alt="Chengecha Associates"
                 fill
                 sizes="(max-width: 768px) 100vw, 50px"
-                className="object-contain object-left"
+                className="object-contain object-left brightness-0 invert"
               />
             </a>
             <p className="text-gray-500 text-xs">
