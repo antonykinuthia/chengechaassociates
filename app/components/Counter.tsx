@@ -58,7 +58,7 @@ export default function Counter({
   return (
     <div
       ref={ref}
-      className="text-4xl md:text-5xl font-bold text-amber-500"
+      className="text-4xl md:text-5xl font-bold text-red-500"
     >
       {count.toLocaleString()}
       {suffix}
