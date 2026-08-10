@@ -175,16 +175,19 @@ export default function Home() {
 
       <header className="sticky top-0 z-50 bg-white/95 dark:bg-gray-950/95 backdrop-blur border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <a href="#home" className="relative h-9 w-36 shrink-0 block">
-            <Image
-              src="/logo/logo.png"
-              alt="Chengecha Associates"
-              fill
-              priority
-              sizes="300px"
-              className="object-contain object-left"
-            />
-          </a>
+          <div className="flex flex-row gap-2 items-center">
+            <a href="#home" className="relative h-9 w-20 shrink-0 block">
+              <Image
+                src="/logo/logo.png"
+                alt="Chengecha Associates"
+                fill
+                priority
+                sizes="300px"
+                className="object-contain object-left"
+              />
+            </a>
+              <h1 className={`${playfair.className} hidden md:block text-xl  font-bold text-gray-900 dark:text-white`}>Chengecha &amp; Associates</h1>
+          </div>
 
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
@@ -312,7 +315,7 @@ export default function Home() {
                   Who We Are
                 </p>
                 <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6`}>
-                  About Chengecha Associates
+                  About Chengecha &amp; Associates
                 </h2>
                 <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed">
                   At Chengecha &amp; Associates, we understand the unique challenges
@@ -598,7 +601,7 @@ export default function Home() {
               />
             </a>
             <p className="text-gray-500 text-xs">
-              © {new Date().getFullYear()} Chengecha Associates. All rights reserved.
+              © {new Date().getFullYear()} Chengecha &amp; Associates. All rights reserved.
             </p>
             <nav aria-label="Footer" className="flex gap-6 flex-wrap">
               {navLinks.map((link) => (
@@ -613,7 +616,7 @@ export default function Home() {
                     href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="fixed right-0 md:right-1/8 md:bottom-12 bottom-1 -translate-y-1/2 z-50 flex items-center justify-center drop-shadow-lg hover:scale-105 transition-transform duration-200"
+                    className="fixed right-0 md:right-1/6 md:bottom-12 bottom-1 -translate-y-1/2 z-50 flex items-center justify-center drop-shadow-lg hover:scale-105 transition-transform duration-200"
                   >
                     <span
                       className="inline-block w-20 h-10 bg-green-500 hover:bg-green-400 transition-colors duration-200"
