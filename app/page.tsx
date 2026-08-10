@@ -590,16 +590,20 @@ export default function Home() {
 
 
         <footer className="bg-gray-950 dark:bg-black border-t border-white/10 dark:border-gray-800 py-8 transition-colors duration-300">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <a href="#home" className="relative h-9 w-36 shrink-0 block">
+          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
+            <div className="flex mb-2 md:mb-0 flex-row gap-2 items-center">
+            <a href="#home" className="relative  h-9 w-20 shrink-0 block">
               <Image
                 src="/logo/logo.png"
                 alt="Chengecha Associates"
                 fill
-                sizes="(max-width: 768px) 100vw, 50px"
+                priority
+                sizes="300px"
                 className="object-contain object-left"
               />
             </a>
+              <h1 className={`${playfair.className} text-base md:text-xl  font-bold text-white`}>Chengecha &amp; Associates</h1>
+          </div>
             <p className="text-gray-500 text-xs">
               © {new Date().getFullYear()} Chengecha &amp; Associates. All rights reserved.
             </p>
