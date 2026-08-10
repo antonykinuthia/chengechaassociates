@@ -551,7 +551,7 @@ export default function Home() {
 
                 <div className="flex flex-wrap gap-6 pt-4">
                   {[
-                    { icon: "📍", text: "North Park Hub, Kamakis" },
+                    { icon: "📍", text: "Professional Center, Kiambu town" },
                     { icon: "🕐", text: "Mon–Fri, 8am–5pm" },
                     { icon: "✉️", text: "info@chengecha.associates" },
                   ].map((item) => (
