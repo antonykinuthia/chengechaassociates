@@ -32,7 +32,7 @@ const WHATSAPP_MESSAGE = encodeURIComponent(
   "Hi Chengecha Associates, I'd like to talk about accounting/tax services for my business."
 );
 
-const MAPS_QUERY = encodeURIComponent("Professional Center, Kiambu Town, Kenya");
+const MAPS_QUERY = "-1.172889,36.830167";
 const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${MAPS_QUERY}`;
 
 const BRAND = {
