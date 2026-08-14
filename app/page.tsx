@@ -1,15 +1,20 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import Counter from "./components/Counter";
-import { useEffect, useRef, useState } from "react";
-import { useTheme } from "next-themes";
+import ThemeToggle from "./components/ThemeToggle";
+import { useRef, useState } from "react";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Lenis from "lenis";
 import Lottie from "lottie-react";
+import Lenis from 'lenis'
 import financeAnimation from "../public/graph.json";
+import { MapPin } from "lucide-react";
+import { services } from "@/app/lib/Services";
+import ContactForm from "./components/ContactForm";
 
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "700", "900"] });
 const dmSans = DM_Sans({ subsets: ["latin"], weight: ["400", "500", "600"] });
@@ -27,151 +32,122 @@ const WHATSAPP_MESSAGE = encodeURIComponent(
   "Hi Chengecha Associates, I'd like to talk about accounting/tax services for my business."
 );
 
+const MAPS_QUERY = encodeURIComponent("Professional Center, Kiambu Town, Kenya");
+const MAPS_URL = `https://www.google.com/maps/search/?api=1&query=${MAPS_QUERY}`;
+
 const BRAND = {
   deepBlue: "#1A54B2",
   brightBlue: "#277DCF",
   red: "#A42525",
 };
 
-function ThemeToggle({ className = "" }: { className?: string }) {
-  const { resolvedTheme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) {
-    return <div className={`w-9 h-9 ${className}`} aria-hidden="true" />;
-  }
-
-  const isDark = resolvedTheme === "dark";
-
-  return (
-    <button
-      type="button"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      className={`w-9 h-9 flex items-center justify-center rounded-full border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 hover:border-amber-400 hover:text-blue-400 transition-colors duration-200 ${className}`}
-    >
-      {isDark ? (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <circle cx="12" cy="12" r="4" />
-          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
-        </svg>
-      ) : (
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-        </svg>
-      )}
-    </button>
-  );
-}
-
 export default function Home() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
   const heroImageRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+  useGSAP(
+    () => {
+      gsap.registerPlugin(ScrollTrigger);
 
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
-    gsap.ticker.lagSmoothing(0);
-
-    lenis.on("scroll", ScrollTrigger.update);
-    const handleWindowLoad = () => ScrollTrigger.refresh();
-    window.addEventListener("load", handleWindowLoad);
-
-    const handleAnchorClick = (e: MouseEvent) => {
-      const target = e.currentTarget as HTMLAnchorElement;
-      const hash = target.getAttribute("href");
-      if (hash && hash.startsWith("#")) {
-        e.preventDefault();
-        const el = document.querySelector(hash);
-        if (el) lenis.scrollTo(el as HTMLElement, { offset: -80 });
-        setMenuOpen(false);
-      }
-    };
-    const anchors = document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]');
-    anchors.forEach((a) => a.addEventListener("click", handleAnchorClick));
-
-    if (heroContentRef.current) {
-      gsap.from(heroContentRef.current.children, {
-        y: 40,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power3.out",
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
       });
-    }
 
-    if (heroImageRef.current) {
-      const mm = gsap.matchMedia();
-      mm.add("(min-width: 768px)", () => {
-        gsap.to(heroImageRef.current, {
-          y: "20%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: "#home",
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
+      const onclick = (time: number) => {
+        lenis.raf(time * 1000);
+      };
+
+      gsap.ticker.add(onclick);
+      gsap.ticker.lagSmoothing(0);
+      lenis.on("scroll", ScrollTrigger.update);
+      
+
+        const handleAnchorClick = (e: MouseEvent) => {
+        const target = e.currentTarget as HTMLAnchorElement;
+        const hash = target.getAttribute("href");
+        if (hash && hash.startsWith("#")) {
+          e.preventDefault();
+          const el = document.querySelector(hash);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+          setMenuOpen(false);
+        }
+      };
+      const anchors = containerRef.current?.querySelectorAll<HTMLAnchorElement>('a[href^="#"]');
+      anchors?.forEach((a) => a.addEventListener("click", handleAnchorClick));
+
+      if (heroContentRef.current) {
+        gsap.from(heroContentRef.current.children, {
+          y: 40,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.15,
+          ease: "power3.out",
+        });
+      }
+
+      if (heroImageRef.current) {
+        const mm = gsap.matchMedia();
+        mm.add("(min-width: 768px)", () => {
+          gsap.to(heroImageRef.current, {
+            y: "20%",
+            ease: "none",
+            scrollTrigger: {
+              trigger: "#home",
+              start: "top top",
+              end: "bottom top",
+              scrub: true,
+            },
+          });
+        });
+      }
+
+      gsap.utils.toArray<HTMLElement>(".section-heading").forEach((el) => {
+        gsap.from(el, {
+          y: 50,
+          opacity: 0,
+          duration: 1,
+          scrollTrigger: { trigger: el, start: "top 85%" },
         });
       });
-    }
 
-    gsap.utils.toArray<HTMLElement>(".section-heading").forEach((el) => {
-      gsap.from(el, {
+      gsap.from(".service-card", {
+        y: 60,
+        opacity: 0,
+        stagger: 0.15,
+        duration: 0.8,
+        scrollTrigger: { trigger: "#services", start: "top 75%" },
+      });
+
+      gsap.from(".testimonial-card", {
+        y: 40,
+        opacity: 0,
+        stagger: 0.2,
+        duration: 0.8,
+        scrollTrigger: { trigger: "#testimonials", start: "top 75%" },
+      });
+
+      gsap.from("#contact .contact-inner", {
         y: 50,
         opacity: 0,
         duration: 1,
-        scrollTrigger: { trigger: el, start: "top 85%" },
+        scrollTrigger: { trigger: "#contact", start: "top 75%" },
       });
-    });
+      const refreshTimeout = setTimeout(() => ScrollTrigger.refresh(), 150);
 
-    gsap.from(".service-card", {
-      y: 60,
-      opacity: 0,
-      stagger: 0.15,
-      duration: 0.8,
-      scrollTrigger: { trigger: "#services", start: "top 75%" },
-    });
-
-    gsap.from(".testimonial-card", {
-      y: 40,
-      opacity: 0,
-      stagger: 0.2,
-      duration: 0.8,
-      scrollTrigger: { trigger: "#testimonials", start: "top 75%" },
-    });
-
-    gsap.from("#contact .contact-inner", {
-      y: 50,
-      opacity: 0,
-      duration: 1,
-      scrollTrigger: { trigger: "#contact", start: "top 75%" },
-    });
-
-    return () => {
-      ScrollTrigger.getAll().forEach((t) => t.kill());
-      gsap.ticker.remove((time) => lenis.raf(time * 1000));
-      anchors.forEach((a) => a.removeEventListener("click", handleAnchorClick));
-      window.removeEventListener("load", handleWindowLoad);
-      lenis.destroy();
-    };
-  }, []);
+      return () => {
+        clearTimeout(refreshTimeout);
+        anchors?.forEach((a) => a.removeEventListener("click", handleAnchorClick));
+      };
+    },
+    { scope: containerRef, dependencies: [] }
+  );
 
   return (
-    <div className={`${dmSans.className} w-full bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300`}>
+    <div ref={containerRef} className={`${dmSans.className} w-full bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300`}>
 
       <header className="sticky top-0 z-50 bg-white/95 dark:bg-gray-950/95 backdrop-blur border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -186,7 +162,9 @@ export default function Home() {
                 className="object-contain object-left"
               />
             </a>
-              <h1 className={`${playfair.className} hidden md:block text-xl  font-bold text-gray-900 dark:text-white`}>Chengecha &amp; Associates</h1>
+            <h1 className={`${playfair.className} hidden md:block text-xl font-bold text-gray-900 dark:text-white`}>
+              Chengecha &amp; Associates
+            </h1>
           </div>
 
           <nav className="hidden md:flex items-center gap-8">
@@ -203,7 +181,6 @@ export default function Home() {
 
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
-            
           </div>
 
           <div className="md:hidden flex items-center gap-2">
@@ -260,7 +237,7 @@ export default function Home() {
             style={{ willChange: "transform" }}
           >
             <Image
-              src="/bg.jpg"
+              src="/bg2.jpg"
               alt="Modern office workspace representing Chengecha Associates accounting services"
               fill
               priority
@@ -268,11 +245,10 @@ export default function Home() {
             />
           </div>
 
-          
           <div className="absolute inset-0 bg-black/55 dark:bg-black/65 z-10" />
 
-          <div ref={heroContentRef} className="relative z-20 max-w-7xl mx-auto px-6 w-full flex justify-end">
-            <div className="max-w-xl space-y-6 text-white">
+          <div ref={heroContentRef} className="relative z-20 max-w-7xl mx-auto px-6 w-full flex  justify-end">
+            <div className="max-w-xl  space-y-6 text-white">
               <p className="text-[#277DCF] text-sm font-semibold uppercase tracking-widest">
                 Smart Accounting &amp; Tax Solutions
               </p>
@@ -282,10 +258,9 @@ export default function Home() {
                 Businesses
               </h1>
               <p className="text-gray-200 text-base md:text-lg leading-relaxed">
-                Less tax. More growth. No guesswork. — expert accounting, audit,
+                Less tax. More growth. No guesswork. Expert accounting, audit,
                 and tax services built around your business.
               </p>
-
               <div className="flex flex-wrap gap-3 pt-2">
                 <a
                   href="#contact"
@@ -300,6 +275,7 @@ export default function Home() {
                   Our Services
                 </a>
               </div>
+
             </div>
           </div>
         </section>
@@ -324,6 +300,20 @@ export default function Home() {
                   delivering exceptional financial services that drive growth and
                   ensure compliance.
                 </p>
+
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 pt-8">
+                    <span className="relative w-20 h-20 shrink-0 rounded-xl bg-white dark:bg-white ring-1 ring-gray-100 dark:ring-gray-800 p-2">
+                      <Image src="/logo/icpak_logo.png" alt="ICPAK" fill className="object-contain  p-1.5" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">ICPAK Certified</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Licensed &amp; regulated by the Institute of Certified Public Accountants of Kenya
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
 
@@ -356,8 +346,7 @@ export default function Home() {
                 </a>
               </div>
             </div>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-12 border-t border-gray-100 dark:border-gray-800">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
               {[
                 { end: 7, suffix: "+", label: "Years Experience" },
                 { end: 150, suffix: "+", label: "Businesses Served" },
@@ -385,50 +374,9 @@ export default function Home() {
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                {
-                  title: "Tax Compliance & Advisory",
-                  description:
-                    "Avoid KES 500,000+ in tax penalties and unlock up to 25% more in legitimate deductions with our expert tax services, fully compliant with Kenyan tax laws.",
-                  pricing: "From KES 5,000",
-                  badge: "25% More Deductions",
-                  image: "/tax.jpg",
-                },
-                {
-                  title: "Profit-Boosting Advisory",
-                  description:
-                    "Increase profit margins by up to 15% with strategic guidance tailored to Kenyan businesses, optimising operations and driving sustainable growth.",
-                  pricing: "From KES 20,000",
-                  badge: "15% Margin Growth",
-                  image: "/profit.jpg",
-                },
-                {
-                  title: "Audit & Assurance",
-                  description:
-                    "Eliminate regulatory risks and build stakeholder trust with audits that achieve a 98% compliance rate on accurate, KRA-compliant financials.",
-                  pricing: "From KES 60,000",
-                  badge: "98% Compliance",
-                  image: "/audit.jpg",
-                },
-                {
-                  title: "Bookkeeping & Accountancy",
-                  description:
-                    "Free up 20+ hours monthly and improve cash flow by 30% with precise bookkeeping and insightful, real-time financial reporting.",
-                  pricing: "From KES 10,000",
-                  badge: "20+ Hours Saved",
-                  image: "/bookkeeping.jpg",
-                },
-                {
-                  title: "Consulting",
-                  description:
-                    "Solve operational bottlenecks and improve efficiency by up to 20% with targeted solutions for process optimisation and financial forecasting.",
-                  pricing: "From KES 15,000",
-                  badge: "20% More Efficient",
-                  image: "/consulting.jpg",
-                },
-              ].map((service) => (
+              {services.map((service) => (
                 <div
-                  key={service.title}
+                  key={service.slug}
                   className="service-card group relative h-135 rounded-[28px] overflow-hidden shadow-sm dark:shadow-none dark:ring-1 dark:ring-gray-800 hover:shadow-xl transition-shadow"
                 >
                   <Image
@@ -449,22 +397,26 @@ export default function Home() {
                       </h3>
                     </div>
 
+                
                     <p className="text-white/80 text-sm leading-relaxed">
-                      {service.description}
+                      {service.summary}
                     </p>
 
                     <div className="flex flex-wrap gap-2 mt-1">
                       <span className="flex items-center gap-1.5 bg-white/15 backdrop-blur-md text-white text-xs font-medium px-3.5 py-2 rounded-full border border-white/10">
-                        {service.badge}
+                        {service.outcomeBadge}
                       </span>
                       <span className="bg-white/15 backdrop-blur-md text-red-100  text-xs font-medium px-3.5 py-2 rounded-full border border-white/10">
-                        {service.pricing}
+                        {service.pricingFrom}
                       </span>
                     </div>
 
-                    <button className="mt-2 w-full bg-white text-gray-900 font-semibold text-sm py-3.5 rounded-full hover:bg-blue-50 transition-colors">
-                      Get Started
-                    </button>
+                    <Link
+                      href={`/services/${service.slug}`}
+                      className="mt-2 w-full bg-white text-gray-900 font-semibold text-sm py-3.5 rounded-full hover:bg-blue-50 transition-colors text-center"
+                    >
+                      Learn More
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -487,15 +439,11 @@ export default function Home() {
                   quote:
                     "Chengecha & Associates are extremely experienced and dedicated when it comes to solving Tax related issues.",
                   name: "Simon Mwangi",
-                  role: "Director",
-                  company: "Mwangi Traders Ltd",
                 },
                 {
                   quote:
                     "My company has benefitted greatly from the book keeping and accountancy services that i have received from this team.",
                   name: "Clinton Ouko",
-                  role: "Managing Partner",
-                  company: "C. Engineers Ltd",
                 },
                 {
                   quote:
@@ -507,7 +455,6 @@ export default function Home() {
                   <p className="text-gray-700 dark:text-gray-200 text-base leading-relaxed mb-6 italic">"{t.quote}"</p>
                   <div>
                     <p className="font-semibold text-gray-900 dark:text-white text-sm">{t.name}</p>
-                
                   </div>
                 </div>
               ))}
@@ -528,30 +475,27 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
               <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  className="w-full bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-amber-400 transition-colors"
-                />
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className="w-full bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-amber-400 transition-all duration-300 focus:-translate-y-1"
-                />
-                <textarea
-                  rows={4}
-                  placeholder="Tell us about your business..."
-                  className="w-full bg-white/10 border border-white/20 text-white placeholder-gray-400 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-amber-400 transition-colors resize-none"
-                />
-                <div className="grid grid-cols-1">
-                  <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg transition-colors duration-200">
-                    Send Message
-                  </button>
+                <ContactForm/>
+
+                
+                <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 mt-2">
+                  <span className="text-lg leading-none pt-0.5 text-green-400/80"><MapPin /></span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white">Professional Center, Kiambu Town</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Open Mon–Fri, 8am–5pm</p>
+                    <a
+                      href={MAPS_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-blue-300 hover:text-blue-200 transition-colors"
+                    >
+                      Get directions <span aria-hidden="true">→</span>
+                    </a>
+                  </div>
                 </div>
 
                 <div className="flex flex-wrap gap-6 pt-4">
                   {[
-                    { icon: "📍", text: "Professional Center, Kiambu town" },
                     { icon: "🕐", text: "Mon–Fri, 8am–5pm" },
                     { icon: "✉️", text: "info@chengecha.associates" },
                   ].map((item) => (
@@ -592,18 +536,20 @@ export default function Home() {
         <footer className="bg-gray-950 dark:bg-black border-t border-white/10 dark:border-gray-800 py-8 transition-colors duration-300">
           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
             <div className="flex mb-2 md:mb-0 flex-row gap-2 items-center">
-            <a href="#home" className="relative  h-9 w-20 shrink-0 block">
-              <Image
-                src="/logo/logo.png"
-                alt="Chengecha Associates"
-                fill
-                priority
-                sizes="300px"
-                className="object-contain object-left"
-              />
-            </a>
-              <h1 className={`${playfair.className} text-base md:text-xl  font-bold text-white`}>Chengecha &amp; Associates</h1>
-          </div>
+              <a href="#home" className="relative h-9 w-20 shrink-0 block">
+                <Image
+                  src="/logo/logo.png"
+                  alt="Chengecha Associates"
+                  fill
+                  priority
+                  sizes="300px"
+                  className="object-contain object-left"
+                />
+              </a>
+              <h1 className={`${playfair.className} text-base md:text-xl font-bold text-white`}>
+                Chengecha &amp; Associates
+              </h1>
+            </div>
             <p className="text-gray-500 text-xs">
               © {new Date().getFullYear()} Chengecha &amp; Associates. All rights reserved.
             </p>
@@ -616,27 +562,27 @@ export default function Home() {
             </nav>
           </div>
         </footer>
-                  <a
-                    href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="fixed right-0 md:right-1/6 md:bottom-12 bottom-1 -translate-y-1/2 z-50 flex items-center justify-center drop-shadow-lg hover:scale-105 transition-transform duration-200"
-                  >
-                    <span
-                      className="inline-block w-20 h-10 bg-green-500 hover:bg-green-400 transition-colors duration-200"
-                      style={{
-                        maskImage: "url('/logo/whatsapp.svg')",
-                        maskSize: "contain",
-                        maskRepeat: "no-repeat",
-                        maskPosition: "center",
-                        WebkitMaskImage: "url('/logo/whatsapp.svg')",
-                        WebkitMaskSize: "contain",
-                        WebkitMaskRepeat: "no-repeat",
-                        WebkitMaskPosition: "center",
-                      }}
-                      aria-label="WhatsApp icon"
-                    />
-                  </a>
+        <a
+          href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed right-0 md:right-1/6 md:bottom-12 bottom-1 -translate-y-1/2 z-50 flex items-center justify-center drop-shadow-lg hover:scale-105 transition-transform duration-200"
+        >
+          <span
+            className="inline-block w-20 h-10 bg-green-500 hover:bg-green-400 transition-colors duration-200"
+            style={{
+              maskImage: "url('/logo/whatsapp.svg')",
+              maskSize: "contain",
+              maskRepeat: "no-repeat",
+              maskPosition: "center",
+              WebkitMaskImage: "url('/logo/whatsapp.svg')",
+              WebkitMaskSize: "contain",
+              WebkitMaskRepeat: "no-repeat",
+              WebkitMaskPosition: "center",
+            }}
+            aria-label="WhatsApp icon"
+          />
+        </a>
       </div>
     </div>
   );
