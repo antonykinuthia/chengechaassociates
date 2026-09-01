@@ -73,13 +73,17 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
       <main className="max-w-5xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          {/* Main content */}
           <div className="lg:col-span-2 space-y-12">
             <div>
               <span className="inline-block bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-semibold px-3.5 py-1.5 rounded-full mb-5">
                 {service.outcomeBadge}
               </span>
-              <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">{service.intro}</p>
+              <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed font-medium mb-3">
+              {service.intro.definition}
+            </p>
+            <p className="text-gray-600 dark:text-gray-300 text-lg leading-relaxed">
+              {service.intro.context}
+            </p>
             </div>
 
             <div>
@@ -104,7 +108,6 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
 
-          {/* Sidebar */}
           <aside className="lg:col-span-1">
             <div className="sticky top-24 rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 p-6 space-y-5">
               <div>
@@ -122,7 +125,6 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
               </a>
               <Link
                 href="/#contact"
-                // scroll={false}
                 className="block text-center w-full py-3 border border-gray-200 dark:border-gray-700 hover:border-blue-400 text-gray-700 dark:text-gray-200 text-sm font-semibold rounded-lg transition-colors duration-200"
               >
                 Send an Enquiry
@@ -133,7 +135,6 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
 
         <div className="mt-16 pt-8 border-t border-gray-100 dark:border-gray-800">
           <Link href="/#services"
-        //    scroll={false}
             className="text-sm font-medium text-blue-500 hover:text-blue-600 transition-colors">
             ← Back to all services
           </Link>

@@ -281,87 +281,99 @@ export default function Home() {
         </section>
 
 
-        <section id="about" className="min-h-screen flex items-center py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
-          <div className="max-w-7xl mx-auto px-6 w-full">
+       <section id="about" className="min-h-screen flex items-center py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
+      <div className="max-w-7xl mx-auto px-6 w-full">
 
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-end mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8  mb-16">
 
-              <div className="lg:col-span-3 flex flex-col">
-                <p className="section-heading text-blue-400 dark:text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
-                  Who We Are
-                </p>
-                <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6`}>
-                  About Chengecha &amp; Associates
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed">
-                  At Chengecha &amp; Associates, we understand the unique challenges
-                  faced by Kenyan businesses. With over 7 years of experience
-                  serving SMEs across Kenya, we&apos;ve built our reputation on
-                  delivering exceptional financial services that drive growth and
-                  ensure compliance.
-                </p>
+          <div className="lg:col-span-3 flex flex-col">
+            <p className="section-heading text-blue-400 dark:text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
+              Who We Are
+            </p>
+            <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6`}>
+              About Chengecha &amp; Associates
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed">
+              At Chengecha &amp; Associates, we understand the unique challenges
+              faced by Kenyan businesses. With over 10 years of experience
+              serving SMEs across Kenya, we&apos;ve built our reputation on
+              delivering exceptional financial services that drive growth and
+              ensure compliance.
+            </p>
 
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center gap-3 pt-8">
-                    <span className="relative w-20 h-20 shrink-0 rounded-xl bg-white dark:bg-white ring-1 ring-gray-100 dark:ring-gray-800 p-2">
-                      <Image src="/logo/icpak_logo.png" alt="ICPAK" fill className="object-contain  p-1.5" />
-                    </span>
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white">ICPAK Certified</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Licensed &amp; regulated by the Institute of Certified Public Accountants of Kenya
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed mt-4">
+              The firm is led by <span className="font-semibold text-gray-900 dark:text-white">Joseph Chengecha</span>,
+              a Certified Public Accountant (CPA-K) and member of the Institute of Certified
+              Public Accountants of Kenya. With over a decade of hands-on experience in tax
+              advisory, audit, and financial management, he founded the firm to give Kenyan
+              SMEs access to the same level of expertise and rigor as larger corporates —
+              delivered with a personal, hands-on approach to every client relationship.
+            </p>
 
-
-              <div className="lg:col-span-2 bg-gray-950 dark:bg-gray-900 dark:border dark:border-gray-800 rounded-2xl p-8 text-white flex flex-col justify-between gap-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex items-center gap-3 pt-8">
+                <span className="relative w-20 h-20 shrink-0 rounded-xl bg-white dark:bg-white ring-1 ring-gray-100 dark:ring-gray-800 p-2">
+                  <Image src="/logo/icpak_logo.png" alt="ICPAK" fill className="object-contain  p-1.5" />
+                </span>
                 <div>
-                  <p className="text-blue-400 text-xs font-semibold uppercase tracking-widest mb-3">Why Choose Us?</p>
-                  <h3 className={`${playfair.className} text-xl font-bold mb-6 leading-snug`}>
-                    The clarity your business deserves
-                  </h3>
-                  <ul className="space-y-3">
-                    {[
-                      "Deep understanding of Kenyan tax laws",
-                      "Proactive tax planning & compliance",
-                      "Transparent pricing, no hidden fees",
-                      "Regular updates & clear communication",
-                      "24/7 client support",
-                    ].map((point) => (
-                      <li key={point} className="flex items-start gap-3 text-sm text-gray-300">
-                        <span className="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">✓</span>
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white">ICPAK Certified</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Licensed &amp; regulated by the Institute of Certified Public Accountants of Kenya
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Founder Joseph Chengecha holds a CPA-K designation
+                  </p>
                 </div>
-                <a
-                  href="#contact"
-                  className="inline-block text-center w-full py-3 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors duration-200"
-                >
-                  Get a Free Consultation
-                </a>
               </div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-              {[
-                { end: 7, suffix: "+", label: "Years Experience" },
-                { end: 150, suffix: "+", label: "Businesses Served" },
-                { end: 98, suffix: "%", label: "Client Retention" },
-                { end: 100, suffix: "%", label: "Compliance Rate" },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <Counter end={stat.end} suffix={stat.suffix} />
-                  <p className="mt-3 text-gray-500 dark:text-gray-400 text-sm uppercase tracking-wide">{stat.label}</p>
-                </div>
-              ))}
-            </div>
-
           </div>
-        </section>
+
+
+          <div className="lg:col-span-2 bg-gray-950 dark:bg-gray-900 dark:border dark:border-gray-800 rounded-2xl p-8 text-white flex  flex-col justify-between gap-6">
+            <div>
+              <p className="text-blue-400 text-xs font-semibold uppercase tracking-widest mb-3">Why Choose Us?</p>
+              <h3 className={`${playfair.className} text-xl font-bold mb-6 leading-snug`}>
+                The clarity your business deserves
+              </h3>
+              <ul className="space-y-3">
+                {[
+                  "Deep understanding of Kenyan tax laws",
+                  "Proactive tax planning & compliance",
+                  "Transparent pricing, no hidden fees",
+                  "Regular updates & clear communication",
+                  "24/7 client support",
+                ].map((point) => (
+                  <li key={point} className="flex items-start gap-3 text-sm text-gray-300">
+                    <span className="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">✓</span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <a
+              href="#contact"
+              className="inline-block text-center w-full py-3 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors duration-200"
+            >
+              Get a Free Consultation
+            </a>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {[
+            { end: 10, suffix: "+", label: "Years Experience" },
+            { end: 200, suffix: "+", label: "Businesses Served" },
+            { end: 98, suffix: "%", label: "Client Retention" },
+            { end: 100, suffix: "%", label: "Compliance Rate" },
+          ].map((stat) => (
+            <div key={stat.label} className="text-center">
+              <Counter end={stat.end} suffix={stat.suffix} />
+              <p className="mt-3 text-gray-500 dark:text-gray-400 text-sm uppercase tracking-wide">{stat.label}</p>
+            </div>
+          ))}
+        </div>
+
+      </div>
+      </section>
 
 
         <section id="services" className="min-h-screen flex items-center py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">

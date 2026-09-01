@@ -5,7 +5,10 @@ export type Service = {
   outcomeBadge: string;
   pricingFrom: string;
   image: string;
-  intro: string;
+  intro: {
+    definition: string;
+    context: string;
+  };
   whoItsFor: string;
   whatsIncluded: string[];
 };
@@ -19,8 +22,12 @@ export const services: Service[] = [
     outcomeBadge: "25% More Deductions",
     pricingFrom: "From KES 5,000",
     image: "/tax.jpg",
-    intro:
-      "Tax in Kenya changes often, and the cost of getting it wrong is the penalties, back-taxes, flagged accounts and legal action is steep. We keep your filings accurate and on schedule, and look ahead for legal ways to lower what you owe.",
+    intro: {
+      definition:
+        "Tax Compliance & Advisory covers the preparation and filing of your statutory tax returns, along with ongoing planning to keep your business on the right side of KRA.",
+      context:
+        "Tax in Kenya changes often, and the cost of getting it wrong is the penalties, back-taxes, flagged accounts and legal action is steep. We keep your filings accurate and on schedule, and look ahead for legal ways to lower what you owe.",
+    },
     whoItsFor:
       "Registered businesses and sole proprietors who want tax handled without the guesswork and stress from an SME filing its first VAT return to a company overdue for a tax health check.",
     whatsIncluded: [
@@ -38,8 +45,12 @@ export const services: Service[] = [
     outcomeBadge: "15% Margin Growth",
     pricingFrom: "From KES 20,000",
     image: "/profit.jpg",
-    intro:
-      "Revenue can look healthy while margins quietly shrink. This service is a structured look at where your money actually goes, so decisions about pricing, costs and growth are based on numbers, not guesswork.",
+    intro: {
+      definition:
+        "Profit-Boosting Advisory is a hands-on review of your pricing, costs and operations, designed to show exactly where margin is slipping and what to do about it.",
+      context:
+        "Revenue can look healthy while margins quietly shrink. This service is a structured look at where your money actually goes, so decisions about pricing, costs and growth are based on numbers, not guesswork.",
+    },
     whoItsFor:
       "Business owners who are turning over revenue but aren't sure why profit feels thinner than it should.",
     whatsIncluded: [
@@ -57,8 +68,12 @@ export const services: Service[] = [
     outcomeBadge: "98% Compliance",
     pricingFrom: "From KES 60,000",
     image: "/audit.jpg",
-    intro:
-      "Whether it's a statutory requirement or a funding round, an audit is only useful if it's done properly. We test your financial statements against recognised standards and give you a report you can put in front of a bank, investor or regulator with confidence.",
+    intro: {
+      definition:
+        "Audit & Assurance is an independent examination of your financial statements, tested against recognised accounting standards and backed by a formal report.",
+      context:
+        "Whether it's a statutory requirement or a funding round, an audit is only useful if it's done properly. We test your financial statements against recognised standards and give you a report you can put in front of a bank, investor or regulator with confidence.",
+    },
     whoItsFor:
       "Companies that need a statutory audit, are raising funding, or want independent assurance their financials are accurate before a major decision.",
     whatsIncluded: [
@@ -76,10 +91,14 @@ export const services: Service[] = [
     outcomeBadge: "20+ Hours Saved",
     pricingFrom: "From KES 10,000",
     image: "/bookkeeping.jpg",
-    intro:
-      "Good decisions need current numbers. We handle the day-to-day recording and reconciliation, and deliver reports you can actually read and act on — not just a spreadsheet dump at year-end.",
+    intro: {
+      definition:
+        "Bookkeeping & Accountancy is the day-to-day recording, reconciliation and reporting of your business's financial transactions.",
+      context:
+        "Good decisions need current numbers. We handle the day-to-day recording and reconciliation, and deliver reports you can actually read and act on — not just a spreadsheet dump at year-end.",
+    },
     whoItsFor:
-      "Businesses that don't have  or don't yet need a full-time in-house accountant, but want accurate, up-to-date books.",
+      "Startups, sole proprietors and businesses that don't have  or don't yet need a full-time in-house accountant, but want accurate, up-to-date books.",
     whatsIncluded: [
       "Daily or weekly transaction recording",
       "Bank and M-Pesa reconciliation",
@@ -95,8 +114,12 @@ export const services: Service[] = [
     outcomeBadge: "20% More Efficient",
     pricingFrom: "From KES 15,000",
     image: "/consulting.jpg",
-    intro:
-      "Not every question fits neatly into 'tax' or 'audit.' This is direct, practical advisory time with someone who understands Kenyan business — for the operational and financial questions that need a real answer, not a template.",
+    intro: {
+      definition:
+        "Consulting is one-on-one advisory time focused on the specific business, financial or structural problem you're facing, rather than a fixed, packaged service.",
+      context:
+        "Not every question fits neatly into 'tax' or 'audit.' This is direct, practical advisory time with someone who understands Kenyan business — for the operational and financial questions that need a real answer, not a template.",
+    },
     whoItsFor:
       "Founders and operators with a specific bottleneck structuring, systems, forecasting, who want direct expert input.",
     whatsIncluded: [
