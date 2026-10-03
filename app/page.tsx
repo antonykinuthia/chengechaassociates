@@ -10,7 +10,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lottie from "lottie-react";
-import Lenis from 'lenis'
+import Lenis from "lenis";
 import financeAnimation from "../public/graph.json";
 import { MapPin } from "lucide-react";
 import { services } from "@/app/lib/Services";
@@ -41,10 +41,44 @@ const BRAND = {
   red: "#A42525",
 };
 
+const testimonials = [
+  {
+    quote:
+      "Chengecha & Associates are extremely experienced and dedicated when it comes to solving Tax related issues.",
+    name: "Simon Mwangi",
+  },
+  {
+    quote:
+      "My company has benefitted greatly from the book keeping and accountancy services that I have received from this team.",
+    name: "Clinton Ouko",
+  },
+  {
+    quote:
+      "I continue to engage Chengecha and Associates in my Annual Audit work due to their detailed and well organized work.",
+    name: "Mercy Chepkoech",
+  },
+  {
+    quote:
+      "Our KRA returns used to be a source of stress. Now everything is filed on time and we always know where we stand.",
+    name: "James Maina",
+  },
+  {
+    quote:
+      "Clear pricing, quick responses, and advice that actually saved us money. Highly recommended.",
+    name: "Peter Owino",
+  },
+  {
+    quote:
+      "They took over our books mid-year and cleaned up months of backlog without any drama.",
+    name: "Nancy Njeru",
+  },
+];
+
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
   const heroImageRef = useRef<HTMLDivElement>(null);
+  const marqueeRef = useRef<HTMLDivElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
   useGSAP(
@@ -57,16 +91,15 @@ export default function Home() {
         smoothWheel: true,
       });
 
-      const onclick = (time: number) => {
+      const onTick = (time: number) => {
         lenis.raf(time * 1000);
       };
 
-      gsap.ticker.add(onclick);
+      gsap.ticker.add(onTick);
       gsap.ticker.lagSmoothing(0);
       lenis.on("scroll", ScrollTrigger.update);
-      
 
-        const handleAnchorClick = (e: MouseEvent) => {
+      const handleAnchorClick = (e: MouseEvent) => {
         const target = e.currentTarget as HTMLAnchorElement;
         const hash = target.getAttribute("href");
         if (hash && hash.startsWith("#")) {
@@ -122,13 +155,38 @@ export default function Home() {
         scrollTrigger: { trigger: "#services", start: "top 75%" },
       });
 
-      gsap.from(".testimonial-card", {
+      gsap.from(".testimonial-marquee", {
         y: 40,
         opacity: 0,
-        stagger: 0.2,
         duration: 0.8,
         scrollTrigger: { trigger: "#testimonials", start: "top 75%" },
       });
+
+      // Testimonials marquee
+      const track = marqueeRef.current;
+      let marqueeCleanup: (() => void) | undefined;
+
+      if (track) {
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        const tween = gsap.to(track, {
+          xPercent: -50, // track holds 2 copies of the list, so -50% loops seamlessly
+          ease: "none",
+          duration: reduceMotion ? 120 : 45, // higher = slower
+          repeat: -1,
+        });
+
+        const pause = () => tween.pause();
+        const play = () => tween.play();
+        track.addEventListener("mouseenter", pause);
+        track.addEventListener("mouseleave", play);
+
+        marqueeCleanup = () => {
+          track.removeEventListener("mouseenter", pause);
+          track.removeEventListener("mouseleave", play);
+          tween.kill();
+        };
+      }
 
       gsap.from("#contact .contact-inner", {
         y: 50,
@@ -136,19 +194,25 @@ export default function Home() {
         duration: 1,
         scrollTrigger: { trigger: "#contact", start: "top 75%" },
       });
+
       const refreshTimeout = setTimeout(() => ScrollTrigger.refresh(), 150);
 
       return () => {
         clearTimeout(refreshTimeout);
         anchors?.forEach((a) => a.removeEventListener("click", handleAnchorClick));
+        marqueeCleanup?.();
+        gsap.ticker.remove(onTick);
+        lenis.destroy();
       };
     },
     { scope: containerRef, dependencies: [] }
   );
 
   return (
-    <div ref={containerRef} className={`${dmSans.className} w-full bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300`}>
-
+    <div
+      ref={containerRef}
+      className={`${dmSans.className} w-full bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300`}
+    >
       <header className="sticky top-0 z-50 bg-white/95 dark:bg-gray-950/95 backdrop-blur border-b border-gray-100 dark:border-gray-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex flex-row gap-2 items-center">
@@ -229,7 +293,6 @@ export default function Home() {
       </header>
 
       <div className="max-w-7xl mx-auto relative">
-
         <section id="home" className="relative h-dvh min-h-150 flex items-center overflow-hidden">
           <div
             ref={heroImageRef}
@@ -247,15 +310,13 @@ export default function Home() {
 
           <div className="absolute inset-0 bg-black/55 dark:bg-black/65 z-10" />
 
-          <div ref={heroContentRef} className="relative z-20 max-w-7xl mx-auto px-6 w-full flex  justify-end">
-            <div className="max-w-xl  space-y-6 text-white">
+          <div ref={heroContentRef} className="relative z-20 max-w-7xl mx-auto px-6 w-full flex justify-end">
+            <div className="max-w-xl space-y-6 text-white">
               <p className="text-[#277DCF] text-sm font-semibold uppercase tracking-widest">
                 Smart Accounting &amp; Tax Solutions
               </p>
               <h1 className={`${playfair.className} text-4xl md:text-5xl font-bold leading-tight`}>
-                Built for{" "}
-                <span className="italic text-[#277DCF]">Ambitious</span>{" "}
-                Businesses
+                Built for <span className="italic text-[#277DCF]">Ambitious</span> Businesses
               </h1>
               <p className="text-gray-200 text-base md:text-lg leading-relaxed">
                 Less tax. More growth. No guesswork. Expert accounting, audit,
@@ -275,106 +336,100 @@ export default function Home() {
                   Our Services
                 </a>
               </div>
-
             </div>
           </div>
         </section>
 
+        <section id="about" className="min-h-screen flex items-center py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
+          <div className="max-w-7xl mx-auto px-6 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 mb-16">
+              <div className="lg:col-span-3 flex flex-col">
+                <p className="section-heading text-blue-400 dark:text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
+                  Who We Are
+                </p>
+                <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6`}>
+                  About Chengecha &amp; Associates
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed">
+                  At Chengecha &amp; Associates, we understand the unique challenges
+                  faced by Kenyan businesses. With over 10 years of experience
+                  serving SMEs across Kenya, we&apos;ve built our reputation on
+                  delivering exceptional financial services that drive growth and
+                  ensure compliance.
+                </p>
 
-       <section id="about" className="min-h-screen flex items-center py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-6 w-full">
+                <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed mt-4">
+                  The firm is led by <span className="font-semibold text-gray-900 dark:text-white">Joseph Chengecha</span>,
+                  a Certified Public Accountant (CPA-K) and member of the Institute of Certified
+                  Public Accountants of Kenya. With over a decade of hands-on experience in tax
+                  advisory, audit, and financial management, he founded the firm to give Kenyan
+                  SMEs access to the same level of expertise and rigor as larger corporates —
+                  delivered with a personal, hands-on approach to every client relationship.
+                </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8  mb-16">
-
-          <div className="lg:col-span-3 flex flex-col">
-            <p className="section-heading text-blue-400 dark:text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
-              Who We Are
-            </p>
-            <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6`}>
-              About Chengecha &amp; Associates
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed">
-              At Chengecha &amp; Associates, we understand the unique challenges
-              faced by Kenyan businesses. With over 10 years of experience
-              serving SMEs across Kenya, we&apos;ve built our reputation on
-              delivering exceptional financial services that drive growth and
-              ensure compliance.
-            </p>
-
-            <p className="text-gray-500 dark:text-gray-400 text-lg leading-relaxed mt-4">
-              The firm is led by <span className="font-semibold text-gray-900 dark:text-white">Joseph Chengecha</span>,
-              a Certified Public Accountant (CPA-K) and member of the Institute of Certified
-              Public Accountants of Kenya. With over a decade of hands-on experience in tax
-              advisory, audit, and financial management, he founded the firm to give Kenyan
-              SMEs access to the same level of expertise and rigor as larger corporates —
-              delivered with a personal, hands-on approach to every client relationship.
-            </p>
-
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-3 pt-8">
-                <span className="relative w-20 h-20 shrink-0 rounded-xl bg-white dark:bg-white ring-1 ring-gray-100 dark:ring-gray-800 p-2">
-                  <Image src="/logo/icpak_logo.png" alt="ICPAK" fill className="object-contain  p-1.5" />
-                </span>
-                <div>
-                  <p className="text-sm font-semibold text-gray-900 dark:text-white">ICPAK Certified</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Licensed &amp; regulated by the Institute of Certified Public Accountants of Kenya
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    Founder Joseph Chengecha holds a CPA-K designation
-                  </p>
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex items-center gap-3 pt-8">
+                    <span className="relative w-20 h-20 shrink-0 rounded-xl bg-white dark:bg-white ring-1 ring-gray-100 dark:ring-gray-800 p-2">
+                      <Image src="/logo/icpak_logo.png" alt="ICPAK" fill className="object-contain p-1.5" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white">ICPAK Certified</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Licensed &amp; regulated by the Institute of Certified Public Accountants of Kenya
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Founder Joseph Chengecha holds a CPA-K designation
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              <div className="lg:col-span-2 bg-gray-950 dark:bg-gray-900 dark:border dark:border-gray-800 rounded-2xl p-8 text-white flex flex-col justify-between gap-6">
+                <div>
+                  <p className="text-blue-400 text-xs font-semibold uppercase tracking-widest mb-3">Why Choose Us?</p>
+                  <h3 className={`${playfair.className} text-xl font-bold mb-6 leading-snug`}>
+                    The clarity your business deserves
+                  </h3>
+                  <ul className="space-y-3">
+                    {[
+                      "Deep understanding of Kenyan tax laws",
+                      "Proactive tax planning & compliance",
+                      "Transparent pricing, no hidden fees",
+                      "Regular updates & clear communication",
+                      "24/7 client support",
+                    ].map((point) => (
+                      <li key={point} className="flex items-start gap-3 text-sm text-gray-300">
+                        <span className="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">✓</span>
+                        {point}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <a
+                  href="#contact"
+                  className="inline-block text-center w-full py-3 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors duration-200"
+                >
+                  Get a Free Consultation
+                </a>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {[
+                { end: 10, suffix: "+", label: "Years Experience" },
+                { end: 200, suffix: "+", label: "Businesses Served" },
+                { end: 98, suffix: "%", label: "Client Retention" },
+                { end: 100, suffix: "%", label: "Compliance Rate" },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <Counter end={stat.end} suffix={stat.suffix} />
+                  <p className="mt-3 text-gray-500 dark:text-gray-400 text-sm uppercase tracking-wide">{stat.label}</p>
+                </div>
+              ))}
             </div>
           </div>
-
-
-          <div className="lg:col-span-2 bg-gray-950 dark:bg-gray-900 dark:border dark:border-gray-800 rounded-2xl p-8 text-white flex  flex-col justify-between gap-6">
-            <div>
-              <p className="text-blue-400 text-xs font-semibold uppercase tracking-widest mb-3">Why Choose Us?</p>
-              <h3 className={`${playfair.className} text-xl font-bold mb-6 leading-snug`}>
-                The clarity your business deserves
-              </h3>
-              <ul className="space-y-3">
-                {[
-                  "Deep understanding of Kenyan tax laws",
-                  "Proactive tax planning & compliance",
-                  "Transparent pricing, no hidden fees",
-                  "Regular updates & clear communication",
-                  "24/7 client support",
-                ].map((point) => (
-                  <li key={point} className="flex items-start gap-3 text-sm text-gray-300">
-                    <span className="mt-0.5 w-4 h-4 shrink-0 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs">✓</span>
-                    {point}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <a
-              href="#contact"
-              className="inline-block text-center w-full py-3 bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold rounded-lg transition-colors duration-200"
-            >
-              Get a Free Consultation
-            </a>
-          </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {[
-            { end: 10, suffix: "+", label: "Years Experience" },
-            { end: 200, suffix: "+", label: "Businesses Served" },
-            { end: 98, suffix: "%", label: "Client Retention" },
-            { end: 100, suffix: "%", label: "Compliance Rate" },
-          ].map((stat) => (
-            <div key={stat.label} className="text-center">
-              <Counter end={stat.end} suffix={stat.suffix} />
-              <p className="mt-3 text-gray-500 dark:text-gray-400 text-sm uppercase tracking-wide">{stat.label}</p>
-            </div>
-          ))}
-        </div>
-
-      </div>
-      </section>
-
+        </section>
 
         <section id="services" className="min-h-screen flex items-center py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
           <div className="max-w-7xl mx-auto px-6">
@@ -409,7 +464,6 @@ export default function Home() {
                       </h3>
                     </div>
 
-                
                     <p className="text-white/80 text-sm leading-relaxed">
                       {service.summary}
                     </p>
@@ -418,7 +472,7 @@ export default function Home() {
                       <span className="flex items-center gap-1.5 bg-white/15 backdrop-blur-md text-white text-xs font-medium px-3.5 py-2 rounded-full border border-white/10">
                         {service.outcomeBadge}
                       </span>
-                      <span className="bg-white/15 backdrop-blur-md text-red-100  text-xs font-medium px-3.5 py-2 rounded-full border border-white/10">
+                      <span className="bg-white/15 backdrop-blur-md text-red-100 text-xs font-medium px-3.5 py-2 rounded-full border border-white/10">
                         {service.pricingFrom}
                       </span>
                     </div>
@@ -436,48 +490,45 @@ export default function Home() {
           </div>
         </section>
 
-
         <section id="testimonials" className="min-h-screen flex items-center py-24 bg-white dark:bg-gray-950 transition-colors duration-300">
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-6 w-full">
             <p className="section-heading text-blue-400 dark:text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
               Social Proof
             </p>
             <h2 className={`${playfair.className} text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-12`}>
               What Our Clients Say
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                {
-                  quote:
-                    "Chengecha & Associates are extremely experienced and dedicated when it comes to solving Tax related issues.",
-                  name: "Simon Mwangi",
-                },
-                {
-                  quote:
-                    "My company has benefitted greatly from the book keeping and accountancy services that i have received from this team.",
-                  name: "Clinton Ouko",
-                },
-                {
-                  quote:
-                    "I continue to engage Chengecha and Associates in my Annual Audit work due to their detailed and well organized work…",
-                  name: "Mercy Chepkoech",
-                },
-              ].map((t) => (
-                <div key={t.name} className="testimonial-card bg-gray-200/80 dark:bg-gray-800/60 rounded-2xl p-8 border border-gray-100 dark:border-gray-700 transition-colors duration-300">
-                  <p className="text-gray-700 dark:text-gray-200 text-base leading-relaxed mb-6 italic">"{t.quote}"</p>
-                  <div>
-                    <p className="font-semibold text-gray-900 dark:text-white text-sm">{t.name}</p>
+            <div
+              className="testimonial-marquee overflow-hidden"
+              style={{
+                maskImage:
+                  "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+                WebkitMaskImage:
+                  "linear-gradient(to right, transparent, black 8%, black 92%, transparent)",
+              }}
+            >
+              <div ref={marqueeRef} className="flex w-max" style={{ willChange: "transform" }}>
+                {[...testimonials, ...testimonials].map((t, i) => (
+                  <div
+                    key={i}
+                    aria-hidden={i >= testimonials.length}
+                    className="testimonial-card shrink-0 mr-6 w-75 md:w-100 flex flex-col justify-between bg-gray-200/80 dark:bg-gray-800/60 rounded-2xl p-8 border border-gray-100 dark:border-gray-700 transition-colors duration-300"
+                  >
+                    <p className="text-gray-700 dark:text-gray-200 text-base leading-relaxed mb-6 italic">
+                      &ldquo;{t.quote}&rdquo;
+                    </p>
+                    <div>
+                      <p className="font-semibold text-gray-900 dark:text-white text-sm">{t.name}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-
         <section id="contact" className="min-h-screen flex items-center py-24 bg-gray-950 dark:bg-black text-white transition-colors duration-300">
           <div className="contact-inner max-w-7xl mx-auto px-6 w-full">
-
             <p className="section-heading text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">
               Get In Touch
             </p>
@@ -485,11 +536,9 @@ export default function Home() {
               Let&apos;s Grow Together
             </h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
               <div className="space-y-4">
-                <ContactForm/>
+                <ContactForm />
 
-                
                 <div className="flex items-start gap-3 rounded-xl border border-white/10 bg-white/5 p-4 mt-2">
                   <span className="text-lg leading-none pt-0.5 text-green-400/80"><MapPin /></span>
                   <div className="flex-1 min-w-0">
@@ -518,9 +567,7 @@ export default function Home() {
                 </div>
               </div>
 
-
               <div className="flex flex-col items-center justify-center gap-6">
-
                 <div className="relative w-full max-w-sm mx-auto">
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div className="w-72 h-72 rounded-full bg-blue-500/5 border border-amber-500/10" />
@@ -539,11 +586,9 @@ export default function Home() {
                   &ldquo;Financial clarity is not a luxury — it&apos;s the foundation every ambitious business deserves.&rdquo;
                 </p>
               </div>
-
             </div>
           </div>
         </section>
-
 
         <footer className="bg-gray-950 dark:bg-black border-t border-white/10 dark:border-gray-800 py-8 transition-colors duration-300">
           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-2 md:gap-4">
@@ -574,6 +619,7 @@ export default function Home() {
             </nav>
           </div>
         </footer>
+
         <a
           href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
           target="_blank"

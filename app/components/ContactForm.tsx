@@ -51,7 +51,7 @@ export default function ContactForm() {
         disabled={status === "sending"}
         className="w-full bg-blue-500 hover:bg-blue-600 disabled:opacity-60 text-white font-semibold py-3 rounded-lg transition-colors duration-200"
       >
-        {status === "sending" ? "Sending..." : status === "sent" ? "Sent ✓" : "Send Message"}
+        {status === "sending" ? "Sending..." : status === "sent" ? "Sent" : "Send Message"}
       </button>
       {status === "error" && (
         <p className="text-red-400 text-xs">Something went wrong — please try again or WhatsApp us.</p>
